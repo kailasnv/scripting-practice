@@ -3,12 +3,18 @@
 
 import socket
 import threading
+import time 
 
 target = input('Enter target IP/domain: ')
+print(f'Scanning {target} for open ports from 1 to 1000....')
+
 
 def scan_port(port):
+    time.sleep(0.01) #to prevent overwhelming the target with too many requests, (iam getting many 'Resource temporarily unavailable" (error 11))
+   
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(1)
+   
     res = sock.connect_ex((target,port))
     if res == 0:
         try:
@@ -23,7 +29,7 @@ def scan_port(port):
     
     sock.close()
     
-for port in range(1, 1000):
+for port in range(1, 1000): # threading to speed up the scanning process
     t = threading.Thread(target=scan_port, args=(port,))
     t.start()
     
