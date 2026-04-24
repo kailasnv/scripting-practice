@@ -11,7 +11,16 @@ def scan_port(port):
     sock.settimeout(1)
     res = sock.connect_ex((target,port))
     if res == 0:
-        print(f'[+] Port {port} is open')
+        try:
+            banner = sock.recv(1024).decode().strip()
+        except:
+            banner = " "
+        print(f'[+] Port {port} is open - {banner}')
+    elif res == 111:
+        print(f'[-] Port {port} is closed')
+    elif res == 110:
+        print(f'[!] Port {port} is filtered')
+    
     sock.close()
     
 for port in range(1, 1000):
