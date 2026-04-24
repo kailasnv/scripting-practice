@@ -2,23 +2,22 @@
 # takes a target ip/domain -> scans for open ports -> returns list of open ports
 
 import socket
+import threading
 
 target = input('Enter target IP/domain: ')
-#port = int(input('Enter port to scan: ')) #only scans 1 port 
 
-#scan for common ports
-for port in range(1,101):
+def scan_port(port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(1)
-
-    result  = sock.connect_ex((target, port))
-
-    # print(result)
-    if result == 0:
-        print(f"Port {port} is open")
-    # else:
-    #     print(f"Port {port} is closed")
-
+    res = sock.connect_ex((target,port))
+    if res == 0:
+        print(f'[+] Port {port} is open')
     sock.close()
     
+for port in range(1, 1000):
+    t = threading.Thread(target=scan_port, args=(port,))
+    t.start()
+    
+    
+      
 
