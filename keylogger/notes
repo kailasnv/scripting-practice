@@ -1,0 +1,17 @@
+sudo evtest --- to get all input devices
+--------------------
+
+How to Reliably Identify Keyboards Never hardcode event4. Instead, identify the device programmatically or via stable symlinks:
+
+Use /proc/bus/input/devices (Programmatic) Parse this file to find the handler associated with the keyboard bitmask EV=120013.
+grep -E 'Handlers|EV=' /proc/bus/input/devices | grep -B1 'EV=120013' | grep -Eo 'event[0-9]+'
+
+This command reliably returns the correct eventX number for the keyboard regardless of what it is. 
+Use Stable Symlinks (Recommended) Check the /dev/input/by-path/ or /dev/input/by-id/ directories. These contain symbolic links with persistent names based on hardware physical path or ID.
+ls -l /dev/input/by-path/*-kbd
+# Example output: ... -> ../event4
+
+Using these paths (e.g., /dev/input/by-path/platform-i8042-serio-0-event-kbd) ensures your script always targets the correct device even if the event number changes. 
+
+---------------
+
